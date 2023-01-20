@@ -11,6 +11,7 @@ import {
 import React, { useState } from 'react'
 import stylesheet, { colors } from '../styles.js'
 import Container from '../Components/Container'
+import { login } from '../utils/apiHandlers.js'
 
 export default function LoginScreen() {
     const { textPrimary, content, input, container, text, button, textDanger } = stylesheet
@@ -19,9 +20,16 @@ export default function LoginScreen() {
     const [emailError, setEmailError] = useState(null)
     const [passwordError, setPasswordError] = useState(null)
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
         Keyboard.dismiss()
         handleValidation()
+
+        if(data.email === '' || data.password === ''){
+            console.log('empty cridentials')
+            return
+        }
+
+        await login(data.email, data.password)
 
     }
 
