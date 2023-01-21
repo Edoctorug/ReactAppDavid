@@ -1,6 +1,6 @@
 # EDoctorUG
 
-A react native project inspected by Mr. Mandela of EDoctor Uganda
+A react native project inspected by Mr. Mandela of EDoctorug Uganda
 
 ## Install dependencies
 
