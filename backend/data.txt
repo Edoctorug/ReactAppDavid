@@ -1,0 +1,6 @@
+{
+"username": "Egeskofos",
+"email": "email@ex.com",
+"password": "ijoepijeijeioeo",
+"password_confirmation": "ijoepijeijeioeo"
+}
