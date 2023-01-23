@@ -4,3 +4,13 @@
 "password": "ijoepijeijeioeo",
 "password_confirmation": "ijoepijeijeioeo"
 }
+
+{
+"email_or_username": "Egeskofos",
+"password": "ijoepijeijeioeo"
+}
+
+{
+"email_or_username": "davy.kyute@gmail.com",
+"password": "456wafula@davy"
+}

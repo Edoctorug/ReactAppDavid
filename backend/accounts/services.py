@@ -3,15 +3,15 @@ from .models import CustomUser
 from .serializers import UserSerializer
 
 
-def login(user: "CustomUser") -> dict:
+def getOrCreatToken(user: "CustomUser") -> dict:
     """
     This handles login, takes in a user.
     It then creates a token for the user and returns that token.
     The token is then used by the front end clients for authentication
     """
-    token = Token.objects.create(user=user)
+    token = Token.objects.get_or_create(user=user)[0].key
     data = {
-        'token': token.key,
+        'token': token,
         'user': {
             'id': user.id,
             'email': user.email,
