@@ -1,14 +1,15 @@
 import { StyleSheet } from "react-native"
 
 export const colors = {
-    bgPrimary: '#bacfc4',
+    bgPrimary: '#7a92bf',
     bgGreen: '#04783e',
-    danger: '#f20202'
+    danger: '#f20202',
+    blue: '#1a3ad9'
 }
 
 export default StyleSheet.create({
     button: {
-        backgroundColor: colors.bgGreen,
+        backgroundColor: colors.blue,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 10,
@@ -38,7 +39,7 @@ export default StyleSheet.create({
     },
 
     input: {
-        borderColor: colors.bgGreen,
+        borderColor: colors.blue,
         borderWidth: 1,
         padding: 10,
         borderRadius: 10,
@@ -56,12 +57,13 @@ export default StyleSheet.create({
     },
 
     textPrimary: {
-        color: colors.bgGreen,
+        color: colors.blue,
         fontWeight: 'bold',
         fontSize: 32,
         marginHorizontal: 'auto',
         marginTop: 20,
         width: '100%',
+        textAlign: 'center'
     }
 
 

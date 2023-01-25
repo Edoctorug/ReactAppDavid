@@ -12,6 +12,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class LoginSerializer(serializers.Serializer):
+    email_or_username = serializers.CharField()
+    password = serializers.CharField()
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()

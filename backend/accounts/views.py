@@ -1,22 +1,28 @@
-
-
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import get_authorization_header, TokenAuthentication
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
 
-from .serializers import RegistrationSerializer, UserSerializer
+from .serializers import RegistrationSerializer, LoginSerializer
 from .services import getOrCreatToken
+from .permissions import IsAuthenticated
 
 
-class UserViewSet(ModelViewSet):
+class UserView(APIView):
     """
     This class will be responsible for retriving all the user information 
     like the username, email, roles and permisions
     """
-    pass
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        print(request.auth)
+        return Response({'key': ''})
 
 
 class RegisterView(APIView):
@@ -45,6 +51,7 @@ class RegisterView(APIView):
 
             # Then save the user
             user = serialized.save()
+
             response_data = getOrCreatToken(user)
 
             return Response(response_data)
@@ -59,8 +66,18 @@ class LoginView(APIView):
     """
 
     def post(self, request):
-        email_or_username = request.data['email_or_username']
-        password = request.data['password']
+
+        # Pass the request data to the login serializer
+        serializer = LoginSerializer(data=request.data)
+
+        # Validate the serializer and if there are any errors, return a 403
+        serializer.is_valid()
+        if serializer.errors:
+            return Response(data={'message': 'Bad request'}, status=403)
+
+        # If the data is valid, get the username or email and password from the validated data of the serializer
+        email_or_username = serializer.validated_data['email_or_username']
+        password = serializer.validated_data['password']
 
         # Check whether a user exists with the provided username or email
         user = get_user_model().objects.filter(Q(username=email_or_username)
@@ -68,15 +85,40 @@ class LoginView(APIView):
 
         # If the user does not exist, then return an error message
         if not user:
-            return Response(data='Invalid cridentials.', status=403)
+            return Response(data={'message': 'Invalid cridentials.'}, status=403)
 
         # If the user exists, then check whether the password provided is correct
         auth_result = user.check_password(raw_password=password)
 
         # If the password is incorrect, still return an error message.
         if not auth_result:
-            return Response(data='Invalid cridentials.', status=403)
+            return Response(data={'message': 'Invalid cridentials.'}, status=403)
 
         # If the password is correct, then handle token authentication.
         data = getOrCreatToken(user)
+
+        user = authenticate(request=request)
+        print(user)
         return Response(data=data)
+
+
+class CustomAuthToken(ObtainAuthToken):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        email_or_username = serializer.validated_data['email_or_username']
+        password = serializer.validated_data['password']
+        user = get_user_model().objects.filter(Q(username=email_or_username)
+                                               | Q(email=email_or_username)).first()
+
+        if not user.check_password(password):
+            raise ValueError('User not found')
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
