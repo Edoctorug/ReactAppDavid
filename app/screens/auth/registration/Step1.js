@@ -1,16 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useState, useContext } from 'react'
 import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, TouchableHighlight, Platform, Keyboard } from 'react-native'
 import Container from '../../../Components/Container'
+import { RegisterFormContext } from '../../../context/RegisterContext'
 import stylesheet, { colors } from '../../../styles'
+import { validatedPassword, validateEmail } from '../../../utils/helpers'
 import { useForm } from '../../../utils/hooks'
 
 export default function RegisterScreen({ navigation }) {
-    
+    const { data, setData } = useContext(RegisterFormContext)
     const { textPrimary, content, input, container, text, button, textDanger } = stylesheet
     const [formData, dispatch] = useForm({email: '', password1: '', password2: ''})
 
+    const [errors, setErrors] = useState({})
+
     const next = () => {
-        navigation.navigate('Step 2')
+        const emailValidation = validateEmail(formData.email)
+        const passwordValidation = validatedPassword(formData.password1, formData.password2)
+        if(emailValidation.email && passwordValidation.password){
+            setData({
+                ...data, 
+                email: emailValidation.email, 
+                password: passwordValidation.password
+            })
+            navigation.navigate('Step 2')
+        }
     }
 
 

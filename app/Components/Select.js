@@ -4,7 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { colors } from '../styles'
 
-export default function Select({ options, value, setValue }) {
+export default function Select({ options, value, setValue, error }) {
     if(!options){
         return null
     }
@@ -49,7 +49,9 @@ export default function Select({ options, value, setValue }) {
                 </View>
             </Modal>
             <Pressable 
-                style={styles.button}
+                style={[styles.button, {
+                    borderColor: error ? colors.danger : colors.blue,
+                }]}
                 onPress={() => setOpen(true)}
             >
                 <Text style={styles.buttonText}>{value ? value : 'Select Role'}</Text>
@@ -64,7 +66,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 9,
         borderWidth: 1,
-        borderColor: colors.blue,
         borderRadius: 10,
         justifyContent: 'space-between',
         alignItems: 'center'
