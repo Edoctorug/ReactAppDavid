@@ -11,7 +11,7 @@ export default function RegisterScreen({ navigation }) {
     const { textPrimary, content, input, container, text, button, textDanger } = stylesheet
     const [formData, dispatch] = useForm({email: '', password1: '', password2: ''})
 
-    const [errors, setErrors] = useState({})
+    const [errors, setErrors] = useState({email: null, password: null})
 
     const next = () => {
         const emailValidation = validateEmail(formData.email)
@@ -23,6 +23,15 @@ export default function RegisterScreen({ navigation }) {
                 password: passwordValidation.password
             })
             navigation.navigate('Step 2')
+        }else{
+            passwordValidation.error 
+            ? setErrors({...errors, password: passwordValidation.error}) 
+            : setErrors({...errors, password: null})
+
+            emailValidation.error 
+            ? setErrors({...errors, email: emailValidation.error}) 
+            : setErrors({...errors, email: null})
+
         }
     }
 
@@ -42,6 +51,7 @@ export default function RegisterScreen({ navigation }) {
                         <Text style={textPrimary}>EDoctorUG,</Text>
                         <Text style={text}>Please create your account.</Text>
 
+                        {errors.email && <Text style={textDanger}>{ errors.email }</Text>}
                         <TextInput
                             placeholder='Email Address'
                             value={formData.email}
@@ -49,6 +59,7 @@ export default function RegisterScreen({ navigation }) {
                             style={[input, {
                             }]} />
 
+                        {errors.password && <Text style={textDanger}>{ errors.password }</Text>}
                         <TextInput
                             placeholder='Password'
                             secureTextEntry value={formData.password1}
