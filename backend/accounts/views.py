@@ -7,9 +7,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.db.models import Q
 
-from .serializers import RegistrationSerializer, LoginSerializer
+from .serializers import RegistrationSerializer, LoginSerializer, LisenceSerializer
 from .services import getOrCreatToken
 from .permissions import IsAuthenticated
+from .models import Lisence
 
 
 class UserView(APIView):
@@ -51,6 +52,16 @@ class RegisterView(APIView):
 
             # Then save the user
             user = serialized.save()
+
+            # After storing a user, store a licence too
+            if ('lisence' in request.data):
+                """
+                Later after a good review, this logic should be implimented using django signals 
+                """
+                file_serializer = LisenceSerializer(
+                    data={'file': request.data['lisence'], 'user': user.id}, context={'request': request})
+                file_serializer.is_valid(raise_exception=True)
+                file_serializer.save()
 
             response_data = getOrCreatToken(user)
 

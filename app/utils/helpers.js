@@ -50,15 +50,29 @@ export const pickImageAsync = async (success, fail) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       quality: 1,
+      mediaTypes: 'All'
     });
 
     if (!result.canceled) {
-        console.log(result)
-      success(result.assets[0].uri)
+      success(result.assets[0])
     } else {
       fail('You did not select any image.');
     }
 };
+
+export const uploadImage = (file) => {
+    const formData = new FormData
+
+    if(!file){ return null }
+
+    formData.append('lisence', {
+      name: file.fileName || 'image.png',
+      type: file.type,
+      uri: file.uri
+    })
+
+    return formData
+  }
 
 /**
  * The function that is responsible for handling the login functinality.
@@ -90,14 +104,14 @@ export const login = async(username, password) => {
  */
 export const register = async(data) => {
     try {
-        const res = await post('auth/signup/', data)
+        const res = await post('auth/signup/', data, null, 'multipart/form-data')
         
         return res.data
     } catch (error) {
         if(error.response){
-            throw new Error(`Login failed, ${JSON.stringify(error.response.data)}`)
+            console.log(`Registration failed, ${JSON.stringify(error.response.data)}`)
         }
-        console.log(error.message)
+        console.log('Error ', error.message)
     }
 }
 

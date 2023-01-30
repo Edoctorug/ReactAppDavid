@@ -5,7 +5,7 @@ import { EvilIcons } from '@expo/vector-icons';
 import Container from '../../../Components/Container'
 import stylesheet, { colors } from '../../../styles'
 import { RegisterFormContext } from '../../../context/RegisterContext' 
-import { pickImageAsync, register } from '../../../utils/helpers';
+import { pickImageAsync, register, uploadImage } from '../../../utils/helpers';
 
 export default function Step3() {
     // Import styles 
@@ -14,33 +14,44 @@ export default function Step3() {
     // Use data from the registration context
     const { data, setData } = useContext(RegisterFormContext)
 
-    // Set the role fields the need a lisense
+    // Set the role fields the need a lisence
     const linsensables = ['Doctor', 'Pharmacy']
 
-    // Show the upload lisense button if the role selected is lisensable
-    const uploadLisense = linsensables.includes(data.role)
+    // Show the upload lisence button if the role selected is lisensable
+    const uploadLisence = linsensables.includes(data.role)
 
-    // The lisense image instance
-    const [lisense, setLisense] = useState(null)
-    const [lisenseError, setLisenseError] = useState(null)
+    // The lisence image instance
+    const [lisence, setLisence] = useState(null)
+    const [lisenceError, setLisenceError] = useState(null)
 
     useEffect(() => {
-        if(lisense){
-            setLisenseError(null)
-            setData({...data, lisense: lisense})
+        if(lisence){
+            setLisenceError(null)
+            setData({...data, lisence: {
+                name: lisence.fileName || 'image.JPG',
+                type: lisence.type,
+                uri: lisence.uri
+              }})
         }
-    }, [lisense])
+    }, [lisence])
     
 
     /**
      * Handle user registration
      */
     const handleRegister = async() => {
+        const formData = new FormData
+
+        // Construct a FormData instance using the data we have in global registration data
+        for (const field in data) {
+            formData.append(field, data[field])
+        }
+        
         try {
-            const res = await register(data)
+            const res = await register(formData)
             console.log(res)
         } catch (error) {
-            console.log(error)
+            console.log('HHH', error)
         }
     }
     return (
@@ -75,20 +86,20 @@ export default function Step3() {
                         <Text style={[text, { fontWeight: '400'}]}>Role: </Text>
                         <Text style={text}>{data.role}</Text>
                     </View>
-                    { uploadLisense && 
+                    { uploadLisence && 
                         <View style={{marginTop: 4}}>
-                            {lisenseError && <Text>{ lisenseError }</Text>}
+                            {lisenceError && <Text>{ lisenceError }</Text>}
                             <Pressable
                             style={[button, {
                                 backgroundColor: colors.bgGreen,
                                 marginTop: 0
                             }]}
-                            onPress={()=>pickImageAsync(setLisense, setLisenseError)}
+                            onPress={()=>pickImageAsync(setLisence, setLisenceError)}
                             >
                                 <Text style={{
                                     color: colors.bgPrimary,
                                     fontSize: 18
-                                }}>Select Lisense.</Text>
+                                }}>{ lisence ? lisence.field ? lisence.field : 'File...' : 'Select Lisence.'}</Text>
                             </Pressable>
                         </View>
                     }

@@ -1,47 +1,61 @@
-import React, { useRef, useEffect } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
-// import LottieView from 'lottie-react-native';
+import { Text, Pressable, View, Image } from 'react-native'
 
-export default function App() {
-  const animation = useRef(null);
-  useEffect(() => {
-    // You can control the ref programmatically, rather than using autoPlay
-    // animation.current?.play();
-  }, []);
+import Container from '../Components/Container'
+import { pickImageAsync, uploadImage } from '../utils/helpers'
+import styles, { colors } from '../styles'
+import { useState } from 'react'
+import { post, setConfig } from '../utils/apiHandlers'
 
+export default function DashboardScreen() {
+  const { button } = styles  
+  const [image, setImage] = useState(null)
+  const [pickError, setPickError] = useState(null)
+
+  const handleUpload = () => {
+    const formData = uploadImage(image)
+    console.log(formData)
+    // try {
+    //   const res = await post('upload', formData, null, 'multipart/form-data')
+    //   console.log(res.data)
+    // } catch (error) {
+    //   console.log(error.response.data)
+    // }
+  }
+  
   return (
-    <View style={styles.animationContainer}>
-      <LottieView
-        autoPlay
-        ref={animation}
-        style={{
-          width: 200,
-          height: 200,
-        }}
-        // Find more Lottie files at https://lottiefiles.com/featured
-        source={require('../assets/lottie-files/doctor-prescription.json')}
-      />
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Restart Animation"
-          onPress={() => {
-            animation.current?.reset();
-            animation.current?.play();
-          }}
-        />
-      </View>
-    </View>
-  );
+    <Container>
+      <View style={{ padding: 20, width: '100%', flex: 1 }}>
+        {!image && <Pressable
+          style={[button, {
+              backgroundColor: colors.bgGreen,
+              marginVertical: 10
+          }]}
+          onPress={()=>pickImageAsync(setImage, setPickError)}
+          >
+              <Text style={{
+                  color: colors.bgPrimary,
+                  fontSize: 18
+              }}>Select Lisense.</Text>
+          </Pressable>}
+          {
+            image && <Image source={{uri: image.uri}} style={{
+              width: 110,
+              height: 120
+            }}/>
+          }
+          <Pressable
+          style={[button, {
+              backgroundColor: colors.bgGreen,
+              marginVertical: 10
+          }]}
+          onPress={ handleUpload }
+          >
+              <Text style={{
+                  color: colors.bgPrimary,
+                  fontSize: 18
+              }}>Upload</Text>
+          </Pressable>
+        </View>
+    </Container>
+  )
 }
-
-const styles = StyleSheet.create({
-  animationContainer: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  buttonContainer: {
-    paddingTop: 20,
-  },
-});

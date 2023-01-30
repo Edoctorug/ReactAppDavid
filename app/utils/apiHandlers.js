@@ -11,8 +11,8 @@ const API_URL = 'http://172.20.10.5:8000/'
  */
 const configurations = {
     headers: {
-        'content-type': 'application/json',
-        'accept': '*/*'
+        'Content-Type': 'application/json',
+        'Accept': '*/*'
     }
 }
 
@@ -20,15 +20,15 @@ const configurations = {
  * The function that processes and sets the configurations that we need for a request.
  * @param token The authenticarion token obtained on login or registration.
  */
-const setConfig = token =>{
+export const setConfig = (token=undefined, type='application/json') =>{
     const config = {
-        ...configurations,
         headers: {
-            ...headers,
-            'Authorization': `Token ${token}`
+            'Accept': 'application/json',
+            'Content-Type': type 
         }
-    }
 
+    }
+    token ? config.headers.Authorization = `Token ${token}` : ''  
     return config
 }
 
@@ -57,12 +57,11 @@ export const get = async(url, token = null) => {
  * @param body The data that is to be passed to api end point for processing.
  * @returns Promise.
  */
-export const post = async(url, body, token=null) => {
+export const post = async(url, body, token=null, type='application/json') => {
     const destinationUrl = API_URL+url
     if(token){
-        const config = setConfig(token)
+        const config = setConfig(token, type)
         return await axios.post(destinationUrl, body, config)
     }
-
     return await axios.post(destinationUrl, body)
 }
