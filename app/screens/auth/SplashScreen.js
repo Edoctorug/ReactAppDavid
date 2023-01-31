@@ -9,8 +9,8 @@ export default function SplashScreen({ navigation }) {
     const { button, text, textPrimary, content } = styleSheet
     const animation = useRef(null);
 
-    const goToLogin = () => {
-        navigation.navigate('Login')
+    const goToRegister = () => {
+        navigation.navigate('Register')
     }
   return (
     <Container>
@@ -47,7 +47,7 @@ export default function SplashScreen({ navigation }) {
         maxWidth: 300,
         marginTop: 30,
         paddingVertical: 2
-      }]} onPress={goToLogin}>
+      }]} onPress={goToRegister}>
         <Text style={[text, {
           color: colors.bgPrimary,
         }]}>Get Started</Text>

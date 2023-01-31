@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native"
 
 export const colors = {
-    bgPrimary: '#7a92bf',
+    bgPrimary: '#dde5eb',
     bgGreen: '#04783e',
     danger: '#f20202',
-    blue: '#1a3ad9'
+    blue: '#1a3ad9',
+    card: '#9ebde6'
 }
 
 export default StyleSheet.create({
@@ -18,17 +19,22 @@ export default StyleSheet.create({
         borderRadius: 10
     },
 
+    card: {
+        backgroundColor: colors.card,
+        padding: 10,
+        borderRadius: 10,
+    },
+
     container: {
         flex: 1,
         backgroundColor: colors.bgPrimary,
-        padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
     },
 
     content: {
         width: '100%',
-        padding: 20,
+        paddingHorizontal: 20,
     },
 
     textDanger: {

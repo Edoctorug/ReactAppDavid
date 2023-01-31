@@ -1,17 +1,42 @@
-import { useState } from 'react'
-import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, TouchableHighlight, Platform, Keyboard } from 'react-native'
+import { useState, useContext } from 'react'
+import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, TouchableOpacity, TouchableHighlight, Platform, Keyboard } from 'react-native'
 import Container from '../../../Components/Container'
+import { RegisterFormContext } from '../../../context/RegisterContext'
 import stylesheet, { colors } from '../../../styles'
+import { validatedPassword, validateEmail } from '../../../utils/helpers'
+import { useForm } from '../../../utils/hooks'
 
 export default function RegisterScreen({ navigation }) {
+    const { data, setData } = useContext(RegisterFormContext)
     const { textPrimary, content, input, container, text, button, textDanger } = stylesheet
-    const [data, setData] = useState({email: '', password1: '', password2: ''})
+    const [formData, dispatch] = useForm({email: '', password1: '', password2: ''})
 
-    const [emailError, setEmailError] = useState(null)
-    const [passwordError, setPasswordError] = useState(null)
+    const [errors, setErrors] = useState({email: null, password: null})
 
     const next = () => {
-        navigation.navigate('Step 2')
+        const emailValidation = validateEmail(formData.email)
+        const passwordValidation = validatedPassword(formData.password1, formData.password2)
+        if(emailValidation.email && passwordValidation.password){
+            setData({
+                ...data, 
+                email: emailValidation.email, 
+                password: passwordValidation.password
+            })
+            navigation.navigate('Step 2')
+        }else{
+            passwordValidation.error 
+            ? setErrors({...errors, password: passwordValidation.error}) 
+            : setErrors({...errors, password: null})
+
+            emailValidation.error 
+            ? setErrors({...errors, email: emailValidation.error}) 
+            : setErrors({...errors, email: null})
+
+        }
+    }
+
+    const goToLogin = () => {
+        navigation.navigate('Login')
     }
 
 
@@ -30,29 +55,26 @@ export default function RegisterScreen({ navigation }) {
                         <Text style={textPrimary}>EDoctorUG,</Text>
                         <Text style={text}>Please create your account.</Text>
 
-                        {emailError && <Text style={textDanger}>{emailError}</Text>}
+                        {errors.email && <Text style={textDanger}>{ errors.email }</Text>}
                         <TextInput
                             placeholder='Email Address'
-                            value={data.email}
-                            onChangeText={(val) => setData({ ...data, email: val.trim() })}
+                            value={formData.email}
+                            onChangeText={(val) => {dispatch({email: val})}}
                             style={[input, {
-                                borderColor: emailError ? colors.danger : colors.blue,
                             }]} />
 
-                        {passwordError && <Text style={textDanger}>{passwordError}</Text>}
+                        {errors.password && <Text style={textDanger}>{ errors.password }</Text>}
                         <TextInput
                             placeholder='Password'
-                            secureTextEntry value={data.password1}
-                            onChangeText={(val) => setData({ ...data, password1: val.trim() })}
+                            secureTextEntry value={formData.password1}
+                            onChangeText={(val) => dispatch({password1: val})}
                             style={[input, {
-                                borderColor: passwordError ? colors.danger : colors.blue,
                             }]} />
                         <TextInput
                             placeholder='Confirm Password'
-                            secureTextEntry value={data.password2}
-                            onChangeText={(val) => setData({ ...data, password2: val.trim() })}
+                            secureTextEntry value={formData.password2}
+                            onChangeText={(val) => dispatch({password2: val})}
                             style={[input, {
-                                borderColor: passwordError ? colors.danger : colors.blue,
                             }]} />
                         <TouchableHighlight onPress={next} style={[button, {
                             maxWidth: 100,
@@ -63,6 +85,19 @@ export default function RegisterScreen({ navigation }) {
                         </TouchableHighlight>
                     </View>
                 </TouchableWithoutFeedback>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems:'center',
+                    marginTop: 20,
+                }}>
+                    <Text>Already have an account? </Text>
+                    <TouchableOpacity onPress={goToLogin}>
+                        <Text style={[text, {
+                            color: colors.blue
+                        }]}>Login</Text>
+                    </TouchableOpacity>
+                </View>
             </KeyboardAvoidingView>
         </Container>
     )

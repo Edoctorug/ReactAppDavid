@@ -44,11 +44,29 @@ class CustomUser(AbstractUser):
         verbose_name='Email Address', max_length=100, unique=True)
     password = models.CharField(verbose_name='Password', max_length=255)
     role = models.CharField(verbose_name='Role', max_length=25, blank=True)
-    phone = models.CharField(verbose_name='Phone Number',
-                             max_length=25, blank=True),
+    image = models.ImageField(upload_to='profiles-images', blank=True)
+    phone = models.CharField(max_length=25, blank=True)
 
     objects = CustomUserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+
+class Lisence(models.Model):
+    """
+    The lisence will be a file/image with two required fields ( user and file ) and two option fields
+    ( role and name).
+    The user is the custom user instance that owns the lisence, file is the actual file content, name 
+    is the name of the file optionally provided and the role is the same as the user role ( Doctor, Pharmacy, etc) 
+    """
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, verbose_name='user')
+    role = models.CharField(max_length=25, verbose_name='role', blank=True)
+    name = models.CharField(
+        max_length=225, verbose_name='File Name', blank=True)
+    file = models.FileField(verbose_name='file', upload_to='lisences')
+
+    def __str__(self) -> str:
+        return f"{self.user.username}'s lisence"

@@ -1,47 +1,25 @@
-import React, { useRef, useEffect } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
-// import LottieView from 'lottie-react-native';
+import { View, Text, TouchableOpacity } from 'react-native'
+import React, { useContext } from 'react'
+import styles, { colors } from '../styles'
 
-export default function App() {
-  const animation = useRef(null);
-  useEffect(() => {
-    // You can control the ref programmatically, rather than using autoPlay
-    // animation.current?.play();
-  }, []);
+import Container from '../Components/Container'
+import { StateContext } from '../context/GeneralContext'
 
+export default function DashboardScreen() {
+  const { deleteAuth } = useContext(StateContext)
+  const handleLogout = async() => {
+    await deleteAuth()
+  }
   return (
-    <View style={styles.animationContainer}>
-      <LottieView
-        autoPlay
-        ref={animation}
-        style={{
-          width: 200,
-          height: 200,
-        }}
-        // Find more Lottie files at https://lottiefiles.com/featured
-        source={require('../assets/lottie-files/doctor-prescription.json')}
-      />
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Restart Animation"
-          onPress={() => {
-            animation.current?.reset();
-            animation.current?.play();
-          }}
-        />
+    <Container>
+      <View style={styles.content}>
+        <TouchableOpacity style={styles.button} onPress={ handleLogout }>
+          <Text style={{
+            color: colors.bgPrimary,
+            fontSize: 18
+          }}>Logout</Text>
+        </TouchableOpacity>
       </View>
-    </View>
-  );
+    </Container>
+  )
 }
-
-const styles = StyleSheet.create({
-  animationContainer: {
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  buttonContainer: {
-    paddingTop: 20,
-  },
-});
