@@ -7,16 +7,19 @@ import {
     TouchableWithoutFeedback, 
     Keyboard, 
     TouchableHighlight,
+    TouchableOpacity,
     
 } from 'react-native'
-import React, { useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useContext, useState } from 'react'
 
+import { StateContext } from '../../context/GeneralContext'
 import stylesheet, { colors } from '../../styles.js'
 import Container from '../../Components/Container'
-import { login } from '../../utils/apiHandlers.js'
+import { login } from '../../utils/helpers'
 
 export default function LoginScreen({ navigation }) {
+
+    const { saveAuth } = useContext(StateContext)
     
     const { textPrimary, content, input, container, text, button, textDanger } = stylesheet
     const [data, setData] = useState({email: '', password: ''})
@@ -35,20 +38,12 @@ export default function LoginScreen({ navigation }) {
         try {
             const login_res = await login(data.email, data.password)
             
-            await storeData(login_res)
+            await saveAuth(login_res)
         } catch (error) {
             console.log('Login error: ',error)
         }
 
     }
-
-    const storeData = async (value) => {
-        try {
-          await AsyncStorage.setItem('auth', JSON.stringify(value))
-        } catch (e) {
-          console.log(e)
-        }
-      }
 
     const handleValidation = () => {
         if(data.password.trim() === '' || data.password.trim().length < 6) {
@@ -107,11 +102,11 @@ export default function LoginScreen({ navigation }) {
                     marginTop: 20,
                 }}>
                     <Text>Not yet a member? </Text>
-                    <TouchableHighlight onPress={goToRegister}>
+                    <TouchableOpacity onPress={goToRegister}>
                         <Text style={[text, {
                             color: colors.blue
                         }]}>Register</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
             </View>
         </TouchableWithoutFeedback>

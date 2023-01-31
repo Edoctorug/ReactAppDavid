@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, TouchableHighlight, Platform, Keyboard } from 'react-native'
+import { View, Text, KeyboardAvoidingView, TouchableWithoutFeedback, TextInput, TouchableOpacity, TouchableHighlight, Platform, Keyboard } from 'react-native'
 import Container from '../../../Components/Container'
 import { RegisterFormContext } from '../../../context/RegisterContext'
 import stylesheet, { colors } from '../../../styles'
@@ -33,6 +33,10 @@ export default function RegisterScreen({ navigation }) {
             : setErrors({...errors, email: null})
 
         }
+    }
+
+    const goToLogin = () => {
+        navigation.navigate('Login')
     }
 
 
@@ -81,6 +85,19 @@ export default function RegisterScreen({ navigation }) {
                         </TouchableHighlight>
                     </View>
                 </TouchableWithoutFeedback>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems:'center',
+                    marginTop: 20,
+                }}>
+                    <Text>Already have an account? </Text>
+                    <TouchableOpacity onPress={goToLogin}>
+                        <Text style={[text, {
+                            color: colors.blue
+                        }]}>Login</Text>
+                    </TouchableOpacity>
+                </View>
             </KeyboardAvoidingView>
         </Container>
     )

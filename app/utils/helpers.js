@@ -86,7 +86,7 @@ export const login = async(username, password) => {
         password
     }
     try {
-        const res = await post('auth/login', data)
+        const res = await post('auth/login/', data)
         
         return res.data
     } catch (error) {

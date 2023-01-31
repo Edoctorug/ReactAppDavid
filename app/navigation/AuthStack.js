@@ -11,16 +11,12 @@ export default function AuthStack() {
     const Stack = createNativeStackNavigator()
   return (
     <FormProvider>
-      <Stack.Navigator screenOptions={{headerTransparent: true}}>
-        <Stack.Screen name='Welcome' component={ SplashScreen } options={{ header: ()=>null}}/>
-        <Stack.Screen name='Login' component={ LoginScreen }/>
-        <Stack.Screen name='Register' component={ RStep1 } options={
-          {
-            headerTitle: 'Step 1'
-          }
-        } />
+      <Stack.Navigator screenOptions={{header: ()=>null}}>
+        <Stack.Screen name='Welcome' component={ SplashScreen }/>
+        <Stack.Screen name='Register' component={ RStep1 }/>
         <Stack.Screen name='Step 2' component={ RStep2 } />
         <Stack.Screen name='Step 3' component={ RStep3 } />
+        <Stack.Screen name='Login' component={ LoginScreen }/>
       </Stack.Navigator>
     </FormProvider>
   )
