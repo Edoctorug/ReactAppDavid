@@ -49,9 +49,10 @@ Install required packages with pip
 ```bash
 pip install -r requirements.txt
 ```
-
-And finally run the server
+Run the server
 
 ```bash
 python3 manage.py runserver 0.0.0.0:8000
 ```
+
+Add the IP address to the allowed hosts in core.settings
